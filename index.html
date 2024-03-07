@@ -78,6 +78,8 @@
       const problems = await (await fetch('probs.json')).json();
       const sols = await (await fetch('sols.json')).json();
 
+      const userids = {"1":"TKirishima","16":"pardouin","20":"Lyndon","21":"Steffan","23":"Shanethegamer","40":"oskar","42":"Hydrazer","70":"mathcat4","75":"steveAllen0112","92":"Natanael","105":"OllieBoyne","233":"copy","260":"OliveIsAWord","281":"att","316":"duckyluuk","417":"nitekat1124","421":"emplv0","427":"Corner","439":"amine-50","485":"aallannnn","486":"selaere","487":"Eixix","488":"math scat","489":"Feniske","490":"bitsandbeyond","491":"Nemestos","492":"roupiq","493":"Steve White","494":"carlgustavh","495":"FFroehlich","496":"Szum123321","498":"LyricLy0","500":"p0lygun","501":"Haire","502":"TFeld00","503":"niklv","504":"bill-myers","505":"lukegustafson","506":"two-bad"};
+
       problems.forEach(x => $('#prob').innerHTML += `<option value="${x.id}">${x.title}</option>`);
 
       function stuff() {
@@ -102,7 +104,7 @@
           const d = $_('div');
           d.classList.add('sol');
           const info = $_('div');
-          info.innerText = `${x.size} bytes - User ${x.owner_id}` + (new Date(x.date_submit * 1000) > enddate ? ' (post mortem)' : '');
+          info.innerText = `${x.size} bytes - User ${userids[x.owner_id] || x.owner_id}` + (new Date(x.date_submit * 1000) > enddate ? ' (post mortem)' : '');
           const sol = $_('code');
           sol.innerText = x.code;
           d.append(info, sol);
