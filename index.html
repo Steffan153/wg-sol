@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js"></script>
   <style>
-    code {
+    div .code {
       display: block;
       white-space: pre;
-      background-color: #f0f0f0;
+
       padding: 0.5rem;
       border-radius: 0.5rem;
     }
@@ -71,6 +72,7 @@
   <div id="stuff"></div>
   <script>
     (async () => {
+      require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' }});
       const $ = s => document.querySelector(s);
       const $$ = s => document.querySelectorAll(s);
       const $_ = s => document.createElement(s);
@@ -100,15 +102,33 @@
         }
         $('#stuff').innerText = '';
         ss.sort((a, b) => a.size - b.size);
-        ss.forEach(x => {
-          const d = $_('div');
-          d.classList.add('sol');
-          const info = $_('div');
-          info.innerText = `${x.size} bytes - User ${userids[x.owner_id] || x.owner_id}` + (new Date(x.date_submit * 1000) > enddate ? ' (post mortem)' : '');
-          const sol = $_('code');
-          sol.innerText = x.code;
-          d.append(info, sol);
-          $('#stuff').append(d);
+        require(['vs/editor/editor.main'], function() {
+          ss.forEach(x => {
+            const d = $_('div');
+            d.classList.add('sol');
+            const info = $_('div');
+            info.innerText = `${x.size} bytes - User ${userids[x.owner_id] || x.owner_id}` + (new Date(x.date_submit * 1000) > enddate ? ' (post mortem)' : '');
+            const sol = document.createElement('div');
+            sol.classList.add('code');
+
+            d.append(info, sol);
+            $('#stuff').appendChild(d);
+            var editor = monaco.editor.create(sol, {
+                value: x.code,
+                language: lang,
+                readOnly:true,
+                minimap:{enabled:false},
+                overviewRulerLanes: 0,
+                scrollbar: {
+                    vertical:"hidden",
+                    horizontal: "hidden",
+                    handleMouseWheel:false,
+                },
+            });
+            const contentHeight = editor.getModel().getLineCount() * 19 ;
+            sol.style.height = contentHeight + 'px';
+            editor.layout();
+          });
         });
       }
       stuff();
