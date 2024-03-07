@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    code {
+      display: block;
+      white-space: pre;
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    .sol {
+      margin-top: 10px;
+    }
+    #more_info, #descript div[onclick] {
+      margin-bottom: 0 !important;
+      display: block !important;
+    }
+
+    code code {
+      display: inline-block;
+      background: #dadada;
+      padding: .25rem;
+    }
+  </style>
+</head>
+<body>
+  <select id="prob"></select>
+  <select id="lang">
+    <option value="apl">apl</option>
+    <option value="bash">bash</option>
+    <option value="bqn">bqn</option>
+    <option value="c">c</option>
+    <option value="c++">c++</option>
+    <option value="clojure">clojure</option>
+    <option value="cpp">cpp</option>
+    <option value="cs">cs</option>
+    <option value="elixir">elixir</option>
+    <option value="fs">fs</option>
+    <option value="go">go</option>
+    <option value="golfscript">golfscript</option>
+    <option value="haskell">haskell</option>
+    <option value="j">j</option>
+    <option value="janet">janet</option>
+    <option value="java">java</option>
+    <option value="javascript">javascript</option>
+    <option value="jelly">jelly</option>
+    <option value="julia">julia</option>
+    <option value="k">k</option>
+    <option value="kotlin">kotlin</option>
+    <option value="lua">lua</option>
+    <option value="nim">nim</option>
+    <option value="ocaml">ocaml</option>
+    <option value="perl">perl</option>
+    <option value="php">php</option>
+    <option value="powershell">powershell</option>
+    <option value="prolog">prolog</option>
+    <option value="python" selected>python</option>
+    <option value="r">r</option>
+    <option value="raku">raku</option>
+    <option value="ruby">ruby</option>
+    <option value="rust">rust</option>
+    <option value="sass">sass</option>
+    <option value="scala">scala</option>
+    <option value="vyxal">vyxal</option>
+  </select>
+  <code id="descript"></code>
+  <div id="stuff"></div>
+  <script>
+    (async () => {
+      const $ = s => document.querySelector(s);
+      const $$ = s => document.querySelectorAll(s);
+      const $_ = s => document.createElement(s);
+
+      const problems = await (await fetch('probs.json')).json();
+      const sols = await (await fetch('sols.json')).json();
+
+      problems.forEach(x => $('#prob').innerHTML += `<option value="${x.id}">${x.title}</option>`);
+
+      function stuff() {
+        const id = $('#prob').value;
+        const lang = $('#lang').value;
+
+        const ss = sols.filter(x => x.problem_id == id && x.lang == lang);
+
+        const problem = problems.find(x => x.id == id);
+        const enddate = new Date(problem.date_end + ' UTC');
+
+        $('#descript').innerHTML = problem.descript;
+        if (problem.example) {
+          $('#descript').innerHTML += '<br><br><b>Example:</b><br>' + problem.example;
+        }
+        if (problem.more_info) {
+          $('#descript').innerHTML += '<br><br><b>More info:</b><br>' + problem.more_info;
+        }
+        $('#stuff').innerText = '';
+        ss.sort((a, b) => a.size - b.size);
+        ss.forEach(x => {
+          const d = $_('div');
+          d.classList.add('sol');
+          const info = $_('div');
+          info.innerText = `${x.size} bytes - User ${x.owner_id}` + (new Date(x.date_submit * 1000) > enddate ? ' (post mortem)' : '');
+          const sol = $_('code');
+          sol.innerText = x.code;
+          d.append(info, sol);
+          $('#stuff').append(d);
+        });
+      }
+      stuff();
+      $('#lang').addEventListener('input', stuff);
+      $('#prob').addEventListener('input', stuff);
+    })();
+  </script>
+</body>
+</html>
