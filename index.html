@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.46/min/vs/loader.js"></script>
   <style>
     div .code {
       display: block;
@@ -72,7 +72,7 @@
   <div id="stuff"></div>
   <script>
     (async () => {
-      require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' }});
+      require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.46/min/vs' }});
       const $ = s => document.querySelector(s);
       const $$ = s => document.querySelectorAll(s);
       const $_ = s => document.createElement(s);
